@@ -1,0 +1,57 @@
+#Programata vrakja 1 dokolku vnesen tekst e palindrom, vo sprotivno vrakja 0
+--------------------------------------------------------------------------------
+.data
+niza: .space 50
+
+.text
+#citame niza od znaci
+la $a0,niza
+li $a1,50
+li $v0,8
+syscall
+jal Symmetry
+
+#pecatenje rezultat
+move $a0,$v0
+li $v0,1
+syscall
+
+#kraj na programa
+li $v0,10
+syscall
+
+Symmetry: #vrakja v0=1 dokolku tekstot e simetricen, vo sprotivno vrakja 0
+li $v0,1
+la $t0,niza
+add $t2,$zero,$zero # i = 0 brojac vo t2
+#broime karakteri vo niza
+for:
+lb $t1,($t0)
+beq $t1,$zero,endFor
+addi $t2,$t2,1
+addi $t0,$t0,1
+j for
+endFor:
+subi $t2,$t2,1 #go odzemame enterot
+
+la $t4,niza #adresata od prviot
+add $t3,$t4,$t2
+subi $t3,$t3,1 #adresata od posledniot karakter vo nizata
+li $t5,0
+loop2:
+lb $t0,($t4)
+beq $t0,$zero,endLoop2
+lb $t1,($t3)
+bne $t1,$t0,notSymmetrical
+j skip
+notSymmetrical:
+addi $t5,$t5,1
+skip:
+addi $t4,$t4,1
+subi $t3,$t3,1
+j loop2
+endLoop2:
+beq $t5,1,ret1
+li $v0,0
+ret1:
+jr $ra
