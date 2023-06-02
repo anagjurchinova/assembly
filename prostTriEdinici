@@ -1,0 +1,70 @@
+#Програмата враќа 1 доколку бројот е прост и завршува на 111, во спротивно враќа 0
+
+.data
+poraka1: .asciiz "Vnesete broj"
+
+.text
+la $a0,poraka1
+li $v0,4
+syscall
+
+#vnesuvanje broj
+li $v0,5
+syscall
+
+move $t0,$v0 #brojot e vo t0
+jal prostTriEdinici
+move $a0,$v0
+#pecatenje rezultat
+li $v0,1
+syscall
+
+#zavrsuvanje na programata
+li $v0,10
+syscall
+
+prostTriEdinici: #davame argument t0, vrakjame rezultat vo v0
+li $v0,0
+addi $sp,$sp,-4
+sw $ra,0($sp)
+jal prost
+beq $v0,$zero,return
+jal triEdinici
+beq $v0,$zero,return
+li $v0,1
+
+return:
+lw $ra,0($sp)
+addi $sp,$sp,4
+jr $ra
+
+prost:
+li $v0,1
+addi $t1,$zero,2 # i = 2
+for:
+beq $t1,$t0,endFor
+div $t2,$t0,$t1
+mfhi $t2
+bne $t2,$zero,skip
+li $v0,0
+skip:
+addi $t1,$t1,1
+j for
+endFor:
+jr $ra
+
+triEdinici:
+li $v0,1
+li $t1,0
+loop:
+beq $t1,3,endLoop
+div $t2,$t0,10
+mfhi $t2
+beq $t2,1,skip2
+li $v0,0
+skip2:
+addi $t1,$t1,1
+div $t0,$t0,10
+j loop
+endLoop:
+jr $ra
