@@ -1,0 +1,97 @@
+Внесете број од тастатура. Ако бројот се наоѓа во интервалот [-5, 105) или е поголем од 105050 или пак е помал или еднаков со -70999, 
+тогаш на екран напишете „во интервал“.Во спротивно, напишете „надвор од интервал“.
+-------------------------------------------------------------------------------------------------------------------------------------
+.data
+
+poraka1: .asciiz "Vo interval"
+
+poraka2: .asciiz "Nadvor od interval"
+
+const1: .word 105050
+
+const2: .word -70999
+
+.text
+
+li $v0,5
+
+syscall
+
+
+move $s0,$v0
+
+
+prvUslov:
+
+li $t0,-5
+
+li $t1,105
+
+
+beq $t0,$s0,voInterval
+
+slt $t2,$t0,$s0
+
+beq $t2,$zero,vtorUslov
+
+slt $t2,$s0,$t1
+
+beq $t2,$zero,vtorUslov
+
+j voInterval
+
+
+
+vtorUslov:
+
+la $t0,const1
+
+lw $t1,($t0)
+
+slt $t2,$t1,$s0
+
+bne $t2,$zero,voInterval
+
+
+
+tretUslov:
+
+la $t0,const2
+
+lw $t1,($t0)
+
+beq $t1,$s0,voInterval
+
+slt $t2,$s0,$t1
+
+bne $t2,$zero,voInterval
+
+
+j nadvorOdInterval
+
+
+voInterval:
+
+la $a0,poraka1
+
+li $v0,4
+
+syscall
+
+
+j end
+
+nadvorOdInterval:
+
+la $a0,poraka2
+
+li $v0,4
+
+syscall
+
+
+end:
+
+li $v0,10
+
+syscall
